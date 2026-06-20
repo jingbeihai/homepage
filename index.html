@@ -14,6 +14,11 @@ a{color:inherit;text-decoration:none}
 button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
 ul{list-style:none}
 
+/*
+ * ─── CHANGE 1: 配色 ───
+ * 暗色底、高对比度、克制用色
+ * Deep neutral base, high contrast, restrained accent
+ */
 :root{
   --accent:#5b6abf;
   --accent-subtle:rgba(91,106,191,0.06);
@@ -64,6 +69,10 @@ body{
   display:flex;
 }
 
+/*
+ * ─── CHANGE 2: 侧边栏 ───
+ * 更简洁，大号文字，隐藏式卡片风格
+ */
 .sidebar{
   width:var(--sidebar-w);flex-shrink:0;
   display:flex;flex-direction:column;
@@ -93,6 +102,7 @@ body{
 }
 .icon-btn:hover{background:var(--bg-card);color:var(--text-primary)}
 
+/* Search - clean minimal */
 .search-bar{
   margin:0 12px 12px;padding:8px 12px;
   border-radius:var(--radius-md);
@@ -110,10 +120,15 @@ body{
   border-radius:3px;background:var(--bg-surface);color:var(--text-tertiary);
 }
 
+/*
+ * ─── CHANGE 3: 卡片式目录 ───
+ * Sidebar 笔记展示改用卡片，大号文字
+ */
 .tree{flex:1;overflow-y:auto;padding:0 8px 8px}
 .tree::-webkit-scrollbar{width:3px}
 .tree::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
+/* ─── 3a: 目录标题（卡片式分类）─── */
 .tree-folder{
   padding:10px 14px;margin:4px 8px;
   border-radius:var(--radius-md);
@@ -127,8 +142,14 @@ body{
   letter-spacing:.03em;text-transform:uppercase;
   transition:all .15s var(--ease-out);
 }
-.tree-folder:hover{border-color:var(--border-light);box-shadow:var(--shadow-card)}
-.tree-folder .arrow{font-size:.5rem;opacity:.3;width:12px;transition:transform .2s}
+.tree-folder:hover{
+  border-color:var(--border-light);
+  box-shadow:var(--shadow-card);
+}
+.tree-folder .arrow{
+  font-size:.5rem;opacity:.3;width:12px;
+  transition:transform .2s;
+}
 .tree-folder .arrow.open{transform:rotate(90deg)}
 .tree-folder .count{
   margin-left:auto;font-size:.7rem;font-weight:500;
@@ -136,6 +157,7 @@ body{
   color:var(--text-tertiary);
 }
 
+/* ─── 3b: 笔记卡片 ─── */
 .note-card{
   padding:10px 14px;margin:2px 8px 2px 20px;
   border-radius:var(--radius-md);
@@ -168,27 +190,22 @@ body{
   font-size:.75rem;color:var(--text-tertiary);
 }
 
+/* ===== Main ===== */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
-.focus-mode .sidebar{display:none}
-.focus-mode .sidebar-overlay{display:none!important}
-.focus-mode .main{width:100vw}
-.focus-indicator{display:none;font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.04em}
-.focus-mode .focus-indicator{display:inline}
-
-.tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:.68rem;font-weight:500;background:var(--accent-subtle);color:var(--accent-soft);margin-right:4px;cursor:pointer;transition:all .15s}
-.tag:hover{background:rgba(91,106,191,0.15)}
-.tag.active{background:var(--accent);color:#fff}
-.tag-filter-bar{display:flex;gap:4px;flex-wrap:wrap;padding:0 12px 8px}
-.tag-filter-bar .tag{font-size:.65rem}
-
+/*
+ * ─── CHANGE 4: 大字排版 ───
+ * 更大的标题、更强的层次
+ */
 .top-bar{
   padding:12px 32px;
   display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--border);
   flex-shrink:0;
 }
-.breadcrumb{font-size:.82rem;color:var(--text-tertiary)}
+.breadcrumb{
+  font-size:.82rem;color:var(--text-tertiary);
+}
 .breadcrumb span{color:var(--text-secondary);font-weight:500}
 .top-actions{display:flex;align-items:center;gap:6px}
 
@@ -209,16 +226,6 @@ body{
   box-shadow:var(--shadow-card);
   background:var(--bg-elevated);
 }
-.btn-delete{
-  background:var(--bg-card);color:#bf5b5b;
-  border:1px solid var(--border);
-  box-shadow:0 1px 2px rgba(0,0,0,.05);
-}
-.btn-delete:hover{
-  border-color:rgba(191,91,91,0.25);
-  box-shadow:0 0 0 1px rgba(191,91,91,0.08),0 4px 20px rgba(0,0,0,0.3);
-  background:var(--bg-elevated);color:#d47a7a;
-}
 
 .avatar{
   width:30px;height:30px;border-radius:50%;
@@ -230,6 +237,10 @@ body{
 
 .content{flex:1;display:flex;overflow:hidden}
 
+/*
+ * ─── CHANGE 5: 卡式正文 ───
+ * 正文显示在卡片内，超大标题，更疏朗的间距
+ */
 .note-view{
   flex:1;overflow-y:auto;padding:40px 56px 80px;
   min-width:0;
@@ -245,8 +256,6 @@ body{
   padding:40px 48px;
   box-shadow:var(--shadow-card);
 }
-.note-card-wrap.fade-in{animation:fadeIn .25s var(--ease-out)}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 .note-meta{
   display:flex;align-items:center;gap:12px;
@@ -257,17 +266,28 @@ body{
   background:var(--accent-subtle);color:var(--accent);
   font-weight:600;font-size:.75rem;letter-spacing:.02em;
 }
-.note-date{font-size:.78rem;color:var(--text-tertiary)}
+.note-date{
+  font-size:.78rem;color:var(--text-tertiary);
+}
 
+/* 大标题 */
 .note-title{
   font-size:2rem;font-weight:700;
   line-height:1.3;letter-spacing:-.03em;
   color:var(--text-hero);margin-bottom:28px;
 }
 
-.note-body{font-size:.95rem;line-height:1.85;color:var(--text-primary)}
-.note-body h2{font-size:1.25rem;font-weight:600;margin:36px 0 12px;color:var(--text-hero);letter-spacing:-.01em}
-.note-body h3{font-size:1.05rem;font-weight:600;margin:24px 0 10px;color:var(--text-hero)}
+.note-body{
+  font-size:.95rem;line-height:1.85;color:var(--text-primary);
+}
+.note-body h2{
+  font-size:1.25rem;font-weight:600;margin:36px 0 12px;
+  color:var(--text-hero);letter-spacing:-.01em;
+}
+.note-body h3{
+  font-size:1.05rem;font-weight:600;margin:24px 0 10px;
+  color:var(--text-hero);
+}
 .note-body p{margin-bottom:16px}
 .note-body pre{
   background:var(--bg-surface);border:1px solid var(--border);
@@ -288,12 +308,22 @@ body{
   color:var(--text-secondary);
   background:var(--accent-subtle);border-radius:0 var(--radius-sm) var(--radius-sm) 0;
 }
-.note-body a{color:var(--accent);border-bottom:1px solid transparent;font-weight:500;transition:border-color .15s}
+.note-body a{
+  color:var(--accent);border-bottom:1px solid transparent;
+  font-weight:500;transition:border-color .15s;
+}
 .note-body a:hover{border-color:var(--accent)}
 .note-body hr{border:none;height:1px;background:var(--border);margin:36px 0}
 
-.backlinks{margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
-.backlinks-title{font-size:.78rem;font-weight:600;color:var(--text-tertiary);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
+/* Backlinks 也改为卡片 */
+.backlinks{
+  margin-top:40px;padding-top:24px;
+  border-top:1px solid var(--border);
+}
+.backlinks-title{
+  font-size:.78rem;font-weight:600;color:var(--text-tertiary);
+  margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;
+}
 .backlink-card{
   padding:10px 14px;border-radius:var(--radius-md);
   background:var(--bg-surface);border:1px solid var(--border);
@@ -303,6 +333,8 @@ body{
 .backlink-card .bl-title{font-size:.88rem;font-weight:500;color:var(--text-primary)}
 .backlink-card .bl-context{font-size:.78rem;color:var(--text-tertiary);display:block;margin-top:2px}
 
+
+/* ===== Editor ===== */
 .editor-view{display:none;flex:1;overflow:hidden}
 .editor-view.open{display:flex}
 .editor-pane{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border)}
@@ -313,7 +345,8 @@ body{
 .toolbar-btn{
   width:28px;height:28px;border-radius:var(--radius-sm);
   display:flex;align-items:center;justify-content:center;
-  font-size:.85rem;color:var(--text-secondary);transition:all .15s;
+  font-size:.85rem;color:var(--text-secondary);
+  transition:all .15s;
 }
 .toolbar-btn:hover{background:var(--bg-hover,var(--bg-card));color:var(--text-primary)}
 .toolbar-sep{width:1px;height:16px;background:var(--border);margin:0 4px}
@@ -326,6 +359,7 @@ body{
 }
 .preview-pane{flex:1;overflow-y:auto;padding:28px 36px;background:var(--bg-card)}
 
+/* ===== Modal ===== */
 .modal-overlay{
   display:none;position:fixed;inset:0;z-index:100;
   background:rgba(0,0,0,.5);backdrop-filter:blur(6px);
@@ -349,22 +383,106 @@ body{
 .modal input:focus{border-color:var(--accent)}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
 
+/* ===== Tree children ===== */
 .tree-children{overflow:hidden;max-height:0;transition:max-height .3s var(--ease-out)}
 .tree-children.open{max-height:800px}
 
-.note-card.dragging{opacity:.4}
-.note-card.drag-over{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 2px 8px var(--accent-glow)}
+/* ===== Focus mode ===== */
+.focus-mode .sidebar{display:none}
+.focus-mode .sidebar-overlay{display:none!important}
+.focus-mode .main{width:100vw}
+.focus-indicator{display:none;font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.04em}
+.focus-mode .focus-indicator{display:inline}
 
-mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;padding:0 2px}
+/* ===== Tags ===== */
+.tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:.68rem;font-weight:500;background:var(--accent-subtle);color:var(--accent-soft);margin-right:4px;cursor:pointer;transition:all .15s}
+.tag:hover{background:rgba(91,106,191,0.15)}
+.tag.active{background:var(--accent);color:#fff}
+.tag-filter-bar{display:flex;gap:4px;flex-wrap:wrap;padding:0 12px 8px}
+.tag-filter-bar .tag{font-size:.65rem}
 
-.hamburger{display:none}
-
+/* ===== Shortcuts modal ===== */
 .shortcuts-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin-top:12px}
 .shortcut-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.82rem}
 .shortcut-row kbd{font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:2px 6px;border-radius:4px;background:var(--bg-surface);border:1px solid var(--border);color:var(--text-secondary)}
 
+/* ===== Drag handle ===== */
+.note-card.dragging{opacity:.4}
+.note-card.drag-over{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 2px 8px var(--accent-glow)}
+.note-card.drag-over .note-card-title::after{content:' ⇣';color:var(--accent)}
+
+/* ===== Note fade in ===== */
+.note-card-wrap.fade-in{animation:fadeIn .25s var(--ease-out)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== Hamburger ===== */
+.hamburger{display:none}
 @media(max-width:768px){
   .hamburger{display:flex}
+}
+
+/* ===== Search highlight ===== */
+mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;padding:0 2px}
+
+/* ===== Delete button ===== */
+.btn-delete{
+  background:var(--bg-card);color:#bf5b5b;
+  border:1px solid var(--border);
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+}
+.btn-delete:hover{
+  border-color:rgba(191,91,91,0.25);
+  box-shadow:0 0 0 1px rgba(191,91,91,0.08),0 4px 20px rgba(0,0,0,0.3);
+  background:var(--bg-elevated);color:#d47a7a;
+}
+
+/* ===== Search Overlay ===== */
+.search-overlay{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(6px);
+  align-items:flex-start;justify-content:center;padding-top:80px;
+}
+.search-overlay.open{display:flex}
+.search-modal{
+  width:560px;max-width:90vw;
+  background:var(--bg-card);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-card-hover);
+  border:1px solid var(--border-light);
+  overflow:hidden;animation:fadeDown .2s var(--ease-out);
+}
+.search-input-wrap{
+  padding:16px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.search-input-wrap input{
+  flex:1;border:none;outline:none;background:transparent;
+  font-size:.95rem;color:var(--text-primary);
+}
+.search-input-wrap input::placeholder{color:var(--text-tertiary)}
+.search-results{padding:8px;max-height:320px;overflow-y:auto}
+.search-result{
+  padding:10px 14px;border-radius:var(--radius-md);
+  cursor:pointer;transition:background .15s;
+}
+.search-result:hover{background:var(--bg-surface)}
+.search-result .sr-title{font-size:.88rem;font-weight:600;color:var(--text-primary)}
+.search-result .sr-excerpt{font-size:.78rem;color:var(--text-tertiary);display:block;margin-top:2px}
+
+/* ===== Graph ===== */
+.graph-view{display:none;position:fixed;inset:0;z-index:99;background:var(--bg-deep)}
+.graph-view.open{display:block}
+.graph-close{
+  position:absolute;top:16px;right:16px;z-index:2;
+  width:34px;height:34px;border-radius:var(--radius-full);
+  background:var(--bg-card);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;cursor:pointer;
+}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== Responsive ===== */
+@media(max-width:768px){
   .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:50;transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
   .sidebar-overlay.open{display:block}
@@ -381,6 +499,7 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
 </head>
 <body>
 
+<!-- ===== Sidebar ===== -->
 <aside class="sidebar">
   <div class="sidebar-header">
     <span class="sidebar-brand">✦ 斌</span>
@@ -389,13 +508,17 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
       <button class="icon-btn" id="themeToggle2" title="切换主题">◐</button>
     </div>
   </div>
+
   <div class="tag-filter-bar" id="tagFilterBar"></div>
+
   <div class="search-bar" onclick="openSearch()">
     <span class="icon">🔍</span>
     <span>搜索笔记...</span>
     <span class="kbd">⌘K</span>
   </div>
+
   <nav class="tree" id="tree"></nav>
+
   <div class="sidebar-footer">
     <span>共 <span id="noteCount">0</span> 篇</span>
     <button class="icon-btn" title="新建笔记" onclick="openNewNote()">＋</button>
@@ -403,18 +526,21 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
 </aside>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
+<!-- ===== Main ===== -->
 <div class="main">
   <div class="top-bar">
     <div style="display:flex;align-items:center;gap:8px">
       <button class="icon-btn hamburger" onclick="toggleSidebar()" title="菜单">☰</button>
-      <div class="breadcrumb"><span id="breadcrumbPath">所有笔记</span></div>
+      <div class="breadcrumb">
+        <span id="breadcrumbPath">所有笔记</span>
+      </div>
     </div>
     <div class="top-actions">
       <span class="focus-indicator">聚焦</span>
       <button class="btn btn-primary" onclick="toggleGraph()">◈ 图谱</button>
       <button class="btn btn-primary" onclick="toggleFocus()">⊞ 聚焦</button>
       <button class="btn btn-primary" onclick="enterEdit()">✏ 编辑</button>
-      <button class="btn btn-delete" onclick="deleteNote()">🗑 删除</button>
+      <button class="btn btn-delete" onclick="deleteNote()" title="删除">🗑 删除</button>
       <div class="avatar">B</div>
     </div>
   </div>
@@ -428,21 +554,67 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
         </div>
         <div id="noteTags" style="margin-bottom:12px;display:flex;gap:4px;flex-wrap:wrap"></div>
         <h1 class="note-title" id="noteTitle">Cloudflare 全家桶搭建完全指南</h1>
-        <div class="note-body" id="noteBody"><p>加载中...</p></div>
+        <div class="note-body" id="noteBody">
+          <p>从零开始使用 Cloudflare Pages、R2、Workers 和 DNS 搭建个人网站生态，涵盖域名配置、存储桶设置、Pages 部署以及国内访问加速的完整流程。</p>
+
+          <h2>整体架构</h2>
+          <p>我的个人网站架构由以下部分组成：</p>
+          <ul>
+            <li><strong>主页</strong>（7988798.xyz）：托管在 Cloudflare Pages</li>
+            <li><strong>博客</strong>（blog.7988798.xyz）：同样托管在 Cloudflare Pages</li>
+            <li><strong>网盘</strong>（drive.7988798.xyz）：基于 R2 存储</li>
+            <li><strong>国内加速</strong>：腾讯云 + Caddy 反向代理</li>
+          </ul>
+
+          <h2>为什么选 Cloudflare</h2>
+          <p>Cloudflare 提供了一套完整的免费工具链：Pages、R2、Workers、DNS，对于个人开发者几乎零成本。</p>
+
+          <blockquote>Caddy 反向代理是解决国内访问 Cloudflare Pages 速度问题的最佳方案。</blockquote>
+
+          <pre><code>{
+  "handler": "reverse_proxy",
+  "upstreams": [{"dial": "homepage-6wv.pages.dev:443"}]
+}</code></pre>
+
+          <div class="backlinks">
+            <div class="backlinks-title">反向链接 · 2</div>
+            <div class="backlink-card" onclick="loadNote('caddy-proxy')">
+              <div class="bl-title">Caddy 反向代理实践</div>
+              <span class="bl-context">用 Caddy 配合腾讯云服务器做反向代理...</span>
+            </div>
+            <div class="backlink-card" onclick="loadNote('r2-web')">
+              <div class="bl-title">R2 Web 文件管理器</div>
+              <span class="bl-context">基于 Cloudflare R2 的纯前端文件管理器...</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="editor-view" id="editorView">
       <div class="editor-pane">
         <div class="editor-toolbar">
-          <button class="toolbar-btn" onclick="saveNote()" title="保存 (⌘S)">💾</button>
+          <button class="toolbar-btn">H</button>
+          <button class="toolbar-btn"><b>B</b></button>
+          <button class="toolbar-btn"><i>I</i></button>
+          <button class="toolbar-btn">&lt;/&gt;</button>
+          <span class="toolbar-sep"></span>
+          <button class="toolbar-btn">☰</button>
+          <button class="toolbar-btn">❝</button>
+          <span class="toolbar-sep"></span>
+           <button class="toolbar-btn" onclick="saveNote()" title="保存 (⌘S)">💾</button>
         </div>
-        <textarea class="editor-textarea" id="editorTextarea" placeholder="用 Markdown 写笔记..."></textarea>
+        <textarea class="editor-textarea" id="editorTextarea" placeholder="用 Markdown 写笔记...">## 整体架构
+
+- **主页**（7988798.xyz）：托管在 Cloudflare Pages
+- **博客**（blog.7988798.xyz）：托管在 Cloudflare Pages
+- **网盘**（drive.7988798.xyz）：基于 R2 存储
+- **国内加速**：腾讯云 + Caddy</textarea>
       </div>
       <div class="preview-pane" id="previewPane">
         <div style="color:var(--text-tertiary);font-size:.8rem;font-weight:500">预览</div>
         <div style="margin-top:12px;font-size:.95rem;line-height:1.85;color:var(--text-primary)">
-          <p>编辑时实时预览...</p>
+          <p>实时预览...</p>
         </div>
       </div>
     </div>
@@ -486,18 +658,27 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
 
 <!-- Search -->
 <div class="search-overlay" id="searchOverlay" onclick="if(event.target===this)closeSearch()">
-  <div class="search-modal" style="width:560px;max-width:90vw;background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-card-hover);border:1px solid var(--border-light);overflow:hidden;animation:fadeDown .2s var(--ease-out)">
-    <div class="search-input-wrap" style="padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+  <div class="search-modal">
+    <div class="search-input-wrap">
       <span>🔍</span>
-      <input type="text" id="searchInput" placeholder="搜索笔记..." autofocus style="flex:1;border:none;outline:none;background:transparent;font-size:.95rem;color:var(--text-primary)">
+      <input type="text" id="searchInput" placeholder="搜索笔记..." autofocus>
     </div>
-    <div class="search-results" id="searchResults" style="padding:8px;max-height:320px;overflow-y:auto"></div>
+    <div class="search-results" id="searchResults">
+      <div class="search-result" onclick="loadNote('cloudflare-guide')">
+        <div class="sr-title">Cloudflare 全家桶搭建完全指南</div>
+        <span class="sr-excerpt">从零开始使用 Cloudflare Pages、R2、Workers 和 DNS...</span>
+      </div>
+      <div class="search-result" onclick="loadNote('caddy-proxy')">
+        <div class="sr-title">Caddy 反向代理实践</div>
+        <span class="sr-excerpt">用 Caddy 配合腾讯云服务器做反向代理...</span>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Graph -->
-<div class="graph-view" id="graphView" style="display:none;position:fixed;inset:0;z-index:99;background:var(--bg-deep)">
-  <button class="graph-close" onclick="closeGraph()" style="position:absolute;top:16px;right:16px;z-index:2;width:34px;height:34px;border-radius:var(--radius-full);background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer">✕</button>
+<div class="graph-view" id="graphView">
+  <button class="graph-close" onclick="closeGraph()">✕</button>
   <canvas class="graph-canvas" id="graphCanvas"></canvas>
 </div>
 
@@ -512,19 +693,86 @@ toggle.addEventListener('click',()=>{
 });
 
 let currentSlug = null;
-let notes = [];
-let activeTag = null;
-let dragSlug = null;
-let focusMode = false;
+let nextId = 6;
 
-const API = '/api';
-
-function escapeHtml(s){
-  const d=document.createElement('div');
-  d.textContent=s;
-  return d.innerHTML;
+// ── localStorage persistence ──
+function saveNotes(){
+  localStorage.setItem('kb-notes', JSON.stringify(notes));
+  localStorage.setItem('kb-nextId', nextId);
+}
+function loadNotes(){
+  const raw = localStorage.getItem('kb-notes');
+  if(raw) notes = JSON.parse(raw);
+  const n = localStorage.getItem('kb-nextId');
+  if(n) nextId = parseInt(n);
 }
 
+const defaultContent = `从零开始使用 Cloudflare Pages、R2、Workers 和 DNS 搭建个人网站生态，涵盖域名配置、存储桶设置、Pages 部署以及国内访问加速的完整流程。
+
+## 整体架构
+
+我的个人网站架构由以下部分组成：
+
+- **主页**（7988798.xyz）：托管在 Cloudflare Pages
+- **博客**（blog.7988798.xyz）：同样托管在 Cloudflare Pages
+- **网盘**（drive.7988798.xyz）：基于 R2 存储
+- **国内加速**：腾讯云 + Caddy 反向代理
+
+## 为什么选 Cloudflare
+
+Cloudflare 提供了一套完整的免费工具链：Pages、R2、Workers、DNS，对于个人开发者几乎零成本。
+
+> Caddy 反向代理是解决国内访问 Cloudflare Pages 速度问题的最佳方案。`;
+
+let notes = [
+  { id:1, title:'Cloudflare 全家桶搭建完全指南', slug:'cloudflare-guide', category:'技术', tags:['cloudflare','部署','dns'], date:'2026-06-15', content: defaultContent },
+  { id:2, title:'Caddy 反向代理实践', slug:'caddy-proxy', category:'技术', tags:['caddy','反向代理','腾讯云'], date:'2026-06-10', content:'38元/年腾讯云 + Caddy 自动 HTTPS，解决 CF Pages 国内访问慢的问题。' },
+  { id:3, title:'CSS 现代特性笔记', slug:'css-modern', category:'笔记', tags:['css','样式'], date:'2026-06-05', content:'@layer 级联层、light-dark() 主题函数、color-mix() 颜色混合。' },
+  { id:4, title:'R2 Web 文件管理器', slug:'r2-web', category:'技术', tags:['r2','cloudflare','前端'], date:'2026-05-20', content:'基于 aws4fetch 的纯客户端 R2 管理器，拖拽上传、暗色模式。' },
+  { id:5, title:'为什么选 Cloudflare', slug:'why-cloudflare', category:'随笔', tags:['cloudflare','选型'], date:'2026-05-28', content:'Pages 免费 CDN + R2 免流量 + Workers 边缘计算。' },
+];
+
+loadNotes();
+
+// ── API ──
+async function apiFetch(path, opts={}){
+  try {
+    const res = await fetch('/api' + path, {
+      headers: { 'Content-Type': 'application/json', ...opts.headers },
+      ...opts,
+    });
+    if(!res.ok) throw new Error(res.statusText);
+    return await res.json();
+  } catch(e) { return null; }
+}
+
+async function syncFromAPI(){
+  try {
+    const res = await fetch('/api/notes');
+    if(res.ok) {
+      const apiNotes = await res.json();
+      if(apiNotes && apiNotes.length) {
+        notes = apiNotes.map(n => ({ ...n, tags: n.tags || [] }));
+        saveNotes();
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+async function syncTagsFromAPI(){
+  try {
+    const res = await fetch('/api/tags');
+    if(res.ok) {
+      const data = await res.json();
+      return data;
+    }
+  } catch(e) {}
+  return null;
+}
+
+// ── Markdown render ──
 function renderMd(md){
   if(!md) return '<p style="color:var(--text-tertiary)">暂无内容</p>';
   try { return marked.parse(md); }
@@ -533,8 +781,9 @@ function renderMd(md){
 
 function mdToText(md){
   if(!md) return '';
+  const html = renderMd(md);
   const div = document.createElement('div');
-  div.innerHTML = renderMd(md);
+  div.innerHTML = html;
   return div.textContent || '';
 }
 
@@ -543,72 +792,10 @@ function todayStr(){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-// ── API ──
-async function apiFetch(path, opts={}){
-  const res = await fetch(API + path, {
-    headers: { 'Content-Type': 'application/json', ...opts.headers },
-    ...opts,
-  });
-  if(!res.ok) throw new Error(await res.text());
-  return res.json();
+function makeSlug(title){
+  return title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g,'-').replace(/^-|-$/g,'') || 'note-'+Date.now();
 }
 
-async function fetchNotes(){
-  const params = new URLSearchParams();
-  if(activeTag) params.set('tag', activeTag);
-  const q = document.getElementById('searchInput')?.value?.trim();
-  if(q) params.set('q', q);
-  const url = '/api/notes' + (params.toString() ? '?' + params.toString() : '');
-  try {
-    const res = await fetch(url);
-    if(res.ok) return await res.json();
-  } catch(e) {}
-  return null;
-}
-
-async function fetchTags(){
-  try {
-    const res = await fetch('/api/tags');
-    if(res.ok) return await res.json();
-  } catch(e) {}
-  return null;
-}
-
-async function init(){
-  const apiNotes = await fetchNotes();
-  if(apiNotes) {
-    notes = apiNotes;
-  } else {
-    const cached = localStorage.getItem('kb-notes');
-    if(cached) notes = JSON.parse(cached);
-  }
-  buildTree(activeTag);
-  buildTagFilter();
-  if(currentSlug) loadNote(currentSlug);
-  else if(notes.length) loadNote(notes[0].slug);
-}
-
-// ── Tags ──
-async function buildTagFilter(){
-  const bar = document.getElementById('tagFilterBar');
-  const apiData = await fetchTags();
-  if(apiData) {
-    const tags = apiData.tags || [];
-    const counts = apiData.counts || {};
-    let html = '<span style="font-size:.65rem;color:var(--text-tertiary);margin-right:4px;font-weight:500">标签</span>';
-    html += `<span class="tag ${!activeTag?'active':''}" onclick="filterTag(null)">全部</span>`;
-    tags.forEach(t => {
-      html += `<span class="tag ${activeTag===t?'active':''}" onclick="filterTag('${t}')">${escapeHtml(t)} (${counts[t]||0})</span>`;
-    });
-    bar.innerHTML = html;
-  }
-}
-function filterTag(tag){
-  activeTag = tag;
-  init();
-}
-
-// ── Build Tree ──
 function buildTree(activeTag){
   const tree=document.getElementById('tree');
   const dirs = {};
@@ -641,6 +828,36 @@ function buildTree(activeTag){
   document.getElementById('noteCount').textContent = filtered.length;
 }
 
+function escapeHtml(s){
+  const d=document.createElement('div');
+  d.textContent=s;
+  return d.innerHTML;
+}
+
+// ── Tags ──
+let activeTag = null;
+async function buildTagFilter(){
+  const bar = document.getElementById('tagFilterBar');
+  const tagSet = new Set();
+  notes.forEach(n => (n.tags||[]).forEach(t => tagSet.add(t)));
+  let tags = [...tagSet].sort();
+  const apiData = await syncTagsFromAPI();
+  if(apiData && apiData.tags) {
+    tags = apiData.tags;
+  }
+  let html = '<span style="font-size:.65rem;color:var(--text-tertiary);margin-right:4px;font-weight:500">标签</span>';
+  html += `<span class="tag ${!activeTag?'active':''}" onclick="filterTag(null)">全部</span>`;
+  tags.forEach(t => {
+    html += `<span class="tag ${activeTag===t?'active':''}" onclick="filterTag('${t}')">${escapeHtml(t)}</span>`;
+  });
+  bar.innerHTML = html;
+}
+function filterTag(tag){
+  activeTag = tag;
+  buildTree(activeTag);
+  buildTagFilter();
+}
+
 // ── Sidebar ──
 function toggleSidebar(){
   document.querySelector('.sidebar').classList.toggle('open');
@@ -652,16 +869,23 @@ function closeSidebar(){
   document.getElementById('sidebarOverlay').classList.remove('open');
 }
 
-// ── Focus ──
+// ── Focus mode ──
+let focusMode = false;
 function toggleFocus(){
   focusMode = !focusMode;
   document.body.classList.toggle('focus-mode', focusMode);
 }
 
 // ── Drag & Drop ──
-function dragStart(e, slug){ dragSlug = slug; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+let dragSlug = null;
+function dragStart(e, slug){
+  dragSlug = slug;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
 function dragOver(e){
-  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
   const card = e.target.closest('.note-card');
   if(card && !card.classList.contains('drag-over')) card.classList.add('drag-over');
 }
@@ -669,7 +893,7 @@ function dragEnd(e){
   e.target.classList.remove('dragging');
   document.querySelectorAll('.note-card.drag-over').forEach(el => el.classList.remove('drag-over'));
 }
-async function drop(e, targetSlug){
+function drop(e, targetSlug){
   e.preventDefault();
   document.querySelectorAll('.note-card.drag-over').forEach(el => el.classList.remove('drag-over'));
   if(!dragSlug || dragSlug === targetSlug) return;
@@ -679,6 +903,7 @@ async function drop(e, targetSlug){
   const [moved] = notes.splice(fromIdx, 1);
   notes.splice(toIdx, 0, moved);
   dragSlug = null;
+  saveNotes();
   buildTree(activeTag);
 }
 
@@ -692,7 +917,8 @@ function loadNote(slug){
   const note = notes.find(n => n.slug === slug);
   if(!note) return;
   currentSlug = note.slug;
-  exitEdit(); closeSidebar();
+  exitEdit();
+  closeSidebar();
   document.getElementById('breadcrumbPath').textContent = `${note.category} / ${note.title}`;
   document.getElementById('noteTag').textContent = note.category;
   document.getElementById('noteDate').textContent = note.date;
@@ -705,6 +931,7 @@ function loadNote(slug){
   document.getElementById('noteBody').innerHTML = renderMd(note.content);
   wrap.classList.add('fade-in');
   buildTree(activeTag);
+  buildTagFilter();
 }
 
 function openNewNote(){
@@ -714,32 +941,38 @@ function openNewNote(){
   document.getElementById('newNoteTags').value='';
   setTimeout(()=>document.getElementById('newNoteTitle').focus(),100);
 }
-function closeNewNote(){ document.getElementById('newNoteModal').classList.remove('open'); }
-
+function closeNewNote(){
+  document.getElementById('newNoteModal').classList.remove('open');
+}
 async function createNote(){
   const title = document.getElementById('newNoteTitle').value.trim();
   const category = document.getElementById('newNoteCategory').value.trim() || '未分类';
   if(!title) return;
   const tagsStr = document.getElementById('newNoteTags').value.trim();
   const tags = tagsStr ? tagsStr.split(/[,，]/).map(s=>s.trim()).filter(Boolean) : [];
-  try {
-    const note = await apiFetch('/notes', {
-      method: 'POST',
-      body: JSON.stringify({ title, category, tags, content: '新笔记，开始写点什么...' }),
-    });
-    notes.push(note);
+  const apiNote = await apiFetch('/notes', {
+    method: 'POST',
+    body: JSON.stringify({ title, category, tags, content: '新笔记，开始写点什么...' }),
+  });
+  if(apiNote) {
+    notes.push({ ...apiNote, tags: apiNote.tags || [] });
+    saveNotes();
     closeNewNote();
-    await init();
-    loadNote(note.slug);
-  } catch(e) {
-    const slug = 'note-' + Date.now();
-    const note = { id: Date.now(), title, slug, category, tags, date: todayStr(), content: '新笔记，开始写点什么...' };
-    notes.push(note);
-    localStorage.setItem('kb-notes', JSON.stringify(notes));
-    closeNewNote();
-    init();
-    loadNote(slug);
+    loadNote(apiNote.slug);
+    return;
   }
+  let slug = makeSlug(title);
+  if(notes.find(n=>n.slug===slug)) slug+='-'+Date.now();
+  const note = {
+    id: nextId++,
+    title, slug, category, tags,
+    date: todayStr(),
+    content: '新笔记，开始写点什么...'
+  };
+  notes.push(note);
+  saveNotes();
+  closeNewNote();
+  loadNote(slug);
 }
 
 function enterEdit(){
@@ -750,7 +983,6 @@ function enterEdit(){
   document.getElementById('editorTextarea').value = note.content || '';
   updatePreview();
 }
-
 function updatePreview(){
   const md = document.getElementById('editorTextarea').value;
   document.getElementById('previewPane').innerHTML = `<div style="color:var(--text-tertiary);font-size:.8rem;font-weight:500;margin-bottom:8px">预览</div><div class="note-body">${renderMd(md)}</div>`;
@@ -761,14 +993,11 @@ async function saveNote(){
   const note = notes.find(n => n.slug === currentSlug);
   if(!note) return;
   note.content = document.getElementById('editorTextarea').value;
-  try {
-    await apiFetch('/notes/' + note.slug, {
-      method: 'PUT',
-      body: JSON.stringify({ content: note.content }),
-    });
-  } catch(e) {
-    localStorage.setItem('kb-notes', JSON.stringify(notes));
-  }
+  apiFetch('/notes/' + note.slug, {
+    method: 'PUT',
+    body: JSON.stringify({ content: note.content }),
+  });
+  saveNotes();
   exitEdit();
   loadNote(currentSlug);
 }
@@ -778,14 +1007,13 @@ function exitEdit(){
 }
 
 async function deleteNote(){
-  if(!currentSlug || !confirm('确定删除这篇笔记？')) return;
+  if(!currentSlug) return;
+  if(!confirm('确定删除这篇笔记？')) return;
+  apiFetch('/notes/' + currentSlug, { method: 'DELETE' });
   const idx = notes.findIndex(n => n.slug === currentSlug);
   if(idx === -1) return;
-  try {
-    await apiFetch('/notes/' + currentSlug, { method: 'DELETE' });
-  } catch(e) {}
   notes.splice(idx, 1);
-  localStorage.setItem('kb-notes', JSON.stringify(notes));
+  saveNotes();
   const next = notes[idx] || notes[idx-1] || null;
   if(next) loadNote(next.slug);
   else {
@@ -796,6 +1024,7 @@ async function deleteNote(){
     document.getElementById('noteTitle').textContent = '无笔记';
     document.getElementById('noteBody').innerHTML = '<p style="color:var(--text-tertiary)">暂无笔记，点 + 新建</p>';
     buildTree(activeTag);
+    buildTagFilter();
   }
 }
 
@@ -807,11 +1036,13 @@ function openSearch(){
   setTimeout(()=>document.getElementById('searchInput').focus(),100);
   doSearch();
 }
-function closeSearch(){ document.getElementById('searchOverlay').classList.remove('open'); }
-
+function closeSearch(){
+  document.getElementById('searchOverlay').classList.remove('open');
+}
 function doSearch(){
   const q = document.getElementById('searchInput').value.trim().toLowerCase();
   const results = document.getElementById('searchResults');
+  const text = q ? mdToText : (s) => s;
   if(!q) {
     results.innerHTML = notes.slice(0,5).map(n => searchResultHTML(n, '')).join('');
     return;
@@ -826,15 +1057,14 @@ function doSearch(){
     ? matched.map(n => searchResultHTML(n, q)).join('')
     : '<div style="padding:20px;text-align:center;color:var(--text-tertiary);font-size:.85rem">无匹配结果</div>';
 }
-
 function searchResultHTML(note, q){
   const title = q ? highlightText(escapeHtml(note.title), q) : escapeHtml(note.title);
   const excerpt = q && note.content
     ? highlightText(escapeHtml(mdToText(note.content).substring(0,60)), q)
     : mdToText(note.content).substring(0,60);
-  return `<div class="search-result" onclick="loadNote('${note.slug}');closeSearch()" style="padding:10px 14px;border-radius:var(--radius-md);cursor:pointer;transition:background .15s">
-    <div style="font-size:.88rem;font-weight:600;color:var(--text-primary)">${title}</div>
-    <span style="font-size:.78rem;color:var(--text-tertiary);display:block;margin-top:2px">${escapeHtml(excerpt)}</span>
+  return `<div class="search-result" onclick="loadNote('${note.slug}');closeSearch()">
+    <div class="sr-title">${title}</div>
+    <span class="sr-excerpt">${escapeHtml(excerpt)}</span>
   </div>`;
 }
 function highlightText(text, q){
@@ -846,11 +1076,15 @@ function highlightText(text, q){
 document.getElementById('searchInput').addEventListener('input', doSearch);
 
 // ── Shortcuts ──
-function openShortcuts(){ document.getElementById('shortcutsModal').classList.add('open'); }
-function closeShortcuts(){ document.getElementById('shortcutsModal').classList.remove('open'); }
+function openShortcuts(){
+  document.getElementById('shortcutsModal').classList.add('open');
+}
+function closeShortcuts(){
+  document.getElementById('shortcutsModal').classList.remove('open');
+}
 
 document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') { if(e.key!=='Escape') return; }
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch()}
   if((e.metaKey||e.ctrlKey)&&e.key==='n'){e.preventDefault();openNewNote()}
   if((e.metaKey||e.ctrlKey)&&e.key==='.'){e.preventDefault();toggleFocus()}
@@ -866,10 +1100,10 @@ document.addEventListener('keydown',e=>{
 // ── Graph ──
 function toggleGraph(){
   const gv=document.getElementById('graphView');
-  gv.style.display=gv.style.display==='none'?'block':'none';
-  if(gv.style.display==='block') initGraph();
+  gv.classList.toggle('open');
+  if(gv.classList.contains('open')) initGraph();
 }
-function closeGraph(){ document.getElementById('graphView').style.display='none'; }
+function closeGraph(){document.getElementById('graphView').classList.remove('open')}
 
 function initGraph(){
   const canvas=document.getElementById('graphCanvas');
@@ -929,7 +1163,15 @@ function initGraph(){
   anim();
 }
 
-init();
+// ── Init ──
+(async function init(){
+  const synced = await syncFromAPI();
+  if(!synced) loadNotes();
+  buildTree(activeTag);
+  await buildTagFilter();
+  if(currentSlug) loadNote(currentSlug);
+  else if(notes.length) loadNote(notes[0].slug);
+})();
 </script>
 </body>
 </html>
