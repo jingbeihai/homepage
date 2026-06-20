@@ -23,7 +23,7 @@ export async function onRequest(context) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('q');
     const token = getUserId(request);
-    let sql = 'SELECT id, title, slug, category, date FROM notes';
+    let sql = 'SELECT id, title, slug, category, date, content FROM notes';
     const params = [];
     const conditions = [];
 
