@@ -766,7 +766,15 @@ async function syncFromAPI(){
     if(res.ok) {
       const apiNotes = await res.json();
       if(apiNotes && apiNotes.length) {
+        const localNotes = notes;
         notes = apiNotes.map(n => ({ ...n }));
+        if(localNotes.length) {
+          for(const local of localNotes) {
+            if(!notes.find(n => n.slug === local.slug)) {
+              notes.push(local);
+            }
+          }
+        }
         saveNotes();
         return true;
       }
@@ -875,7 +883,7 @@ async function uploadFile(){
       const data = await res.json();
       if(data.url) {
         const mdImage = file.type.startsWith('image/') ? `![](${data.url})` : `[${file.name}](${data.url})`;
-        const textarea = document.getElementById('editorContent');
+        const textarea = document.getElementById('editorTextarea');
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         textarea.value = textarea.value.substring(0, start) + mdImage + textarea.value.substring(end);
@@ -1068,6 +1076,7 @@ async function createNote(){
     saveNotes();
     closeNewNote();
     loadNote(apiNote.slug);
+    enterEdit();
     return;
   }
   let slug = makeSlug(title);
@@ -1082,6 +1091,7 @@ async function createNote(){
   saveNotes();
   closeNewNote();
   loadNote(slug);
+  enterEdit();
 }
 
 function enterEdit(){
@@ -1102,7 +1112,7 @@ async function saveNote(){
   const note = notes.find(n => n.slug === currentSlug);
   if(!note) return;
   note.content = document.getElementById('editorTextarea').value;
-  apiFetch('/notes/' + note.slug, {
+  await apiFetch('/notes/' + note.slug, {
     method: 'PUT',
     body: JSON.stringify({ content: note.content }),
   });
@@ -1190,17 +1200,14 @@ function closeShortcuts(){
 }
 
 document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch()}
   if((e.metaKey||e.ctrlKey)&&e.key==='n'){e.preventDefault();if(currentUser)openNewNote();else openLogin()}
   if((e.metaKey||e.ctrlKey)&&e.key==='.'){e.preventDefault();toggleFocus()}
-  if(e.key==='?'&&!e.metaKey&&!e.ctrlKey){openShortcuts()}
-  if(e.key==='Escape'){closeSearch();closeNewNote();closeShortcuts()}
-});
-document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='s'&&document.getElementById('editorView').classList.contains('open')){
     e.preventDefault();saveNote();
   }
+  if(e.key==='?'&&!e.metaKey&&!e.ctrlKey){openShortcuts()}
+  if(e.key==='Escape'){closeSearch();closeNewNote();closeShortcuts()}
 });
 
 // ── Graph ──
