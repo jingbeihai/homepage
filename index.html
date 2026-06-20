@@ -636,18 +636,15 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
 <!-- Login Modal -->
 <div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeLogin()">
   <div class="modal" style="width:360px">
-    <h3 id="loginTitle">登录</h3>
+    <h3>登录</h3>
     <label>用户名</label>
     <input type="text" id="loginUsername" placeholder="输入用户名">
     <label>密码</label>
     <input type="password" id="loginPassword" placeholder="输入密码" onkeydown="if(event.key==='Enter')doLogin()">
     <div id="loginError" style="color:#bf5b5b;font-size:.78rem;margin-bottom:10px;display:none"></div>
-    <div class="modal-actions" style="justify-content:space-between">
-      <span style="font-size:.75rem;color:var(--text-tertiary);cursor:pointer" onclick="showRegister()">注册账号</span>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-ghost" onclick="closeLogin()">取消</button>
-        <button class="btn btn-primary" onclick="doLogin()" id="loginBtn">登录</button>
-      </div>
+    <div class="modal-actions" style="justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeLogin()">取消</button>
+      <button class="btn btn-primary" onclick="doLogin()" id="loginBtn">登录</button>
     </div>
   </div>
 </div>
@@ -805,23 +802,7 @@ async function syncTagsFromAPI(){
 
 // ── Auth ──
 function openLogin(){ showModal('loginModal'); document.getElementById('loginUsername').focus(); }
-function closeLogin(){ hideModal('loginModal'); document.getElementById('loginError').style.display='none'; }
-
-function showRegister(){
-  document.getElementById('loginTitle').textContent = '注册';
-  document.getElementById('loginBtn').textContent = '注册';
-  document.getElementById('loginBtn').onclick = doRegister;
-  document.getElementById('loginError').style.display = 'none';
-}
-
-function resetLoginForm(){
-  document.getElementById('loginTitle').textContent = '登录';
-  document.getElementById('loginBtn').textContent = '登录';
-  document.getElementById('loginBtn').onclick = doLogin;
-  document.getElementById('loginUsername').value = '';
-  document.getElementById('loginPassword').value = '';
-  document.getElementById('loginError').style.display = 'none';
-}
+function closeLogin(){ hideModal('loginModal'); document.getElementById('loginError').style.display='none'; document.getElementById('loginUsername').value=''; document.getElementById('loginPassword').value=''; }
 
 async function doLogin(){
   const username = document.getElementById('loginUsername').value.trim();
@@ -854,40 +835,6 @@ async function doLogin(){
     err.style.display = 'block';
   }
   btn.disabled = false; btn.textContent = '登录';
-}
-
-async function doRegister(){
-  const username = document.getElementById('loginUsername').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  if(!username || !password) return;
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true; btn.textContent = '...';
-  try {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await res.json();
-    if(data.token) {
-      setToken(data.token);
-      currentUser = data.user || username;
-      document.querySelector('.avatar').textContent = username.charAt(0).toUpperCase();
-      document.querySelector('.avatar').title = username;
-      closeLogin();
-      await reloadData();
-    } else {
-      const err = document.getElementById('loginError');
-      err.textContent = data.error || '注册失败';
-      err.style.display = 'block';
-    }
-  } catch(e) {
-    const err = document.getElementById('loginError');
-    err.textContent = '网络错误';
-    err.style.display = 'block';
-  }
-  btn.disabled = false; btn.textContent = '注册';
-  resetLoginForm();
 }
 
 async function doLogout(){
