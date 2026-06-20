@@ -1,9 +1,16 @@
+function getUserId(request) {
+  const auth = request.headers.get('Authorization') || '';
+  const token = auth.replace('Bearer ', '').trim();
+  if (!token || token === 'null' || token === 'undefined') return null;
+  return token;
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 
   if (request.method === 'OPTIONS') {
@@ -16,9 +23,18 @@ export async function onRequest(context) {
     const { searchParams } = new URL(request.url);
     const tag = searchParams.get('tag');
     const search = searchParams.get('q');
+    const token = getUserId(request);
     let sql = 'SELECT id, title, slug, category, date, tags FROM notes';
     const params = [];
     const conditions = [];
+
+    if (token) {
+      const session = await db.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(token).first();
+      if (session) {
+        conditions.push('user_id = ?');
+        params.push(session.user_id);
+      }
+    }
 
     if (tag) {
       conditions.push('tags LIKE ?');
@@ -53,13 +69,21 @@ export async function onRequest(context) {
         status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
+
+    let userId = 1;
+    const token = getUserId(request);
+    if (token) {
+      const session = await db.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(token).first();
+      if (session) userId = session.user_id;
+    }
+
     const slug = makeSlug(title) + '-' + Date.now();
     const date = todayStr();
     const tagsJson = JSON.stringify(tags || []);
 
     await db.prepare(
-      'INSERT INTO notes (title, slug, category, date, content, tags) VALUES (?, ?, ?, ?, ?, ?)'
-    ).bind(title, slug, category || '未分类', date, content || '', tagsJson).run();
+      'INSERT INTO notes (user_id, title, slug, category, date, content, tags) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(userId, title, slug, category || '未分类', date, content || '', tagsJson).run();
 
     const note = await db.prepare('SELECT * FROM notes WHERE slug = ?').bind(slug).first();
     note.tags = JSON.parse(note.tags || '[]');

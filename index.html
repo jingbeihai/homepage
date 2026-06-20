@@ -541,7 +541,7 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
       <button class="btn btn-primary" onclick="toggleFocus()">⊞ 聚焦</button>
       <button class="btn btn-primary" onclick="enterEdit()">✏ 编辑</button>
       <button class="btn btn-delete" onclick="deleteNote()" title="删除">🗑 删除</button>
-      <div class="avatar">B</div>
+      <div class="avatar" id="avatarBtn" onclick="if(currentUser)doLogout();else openLogin()" style="cursor:pointer" title="点击登录">B</div>
     </div>
   </div>
 
@@ -594,15 +594,9 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
     <div class="editor-view" id="editorView">
       <div class="editor-pane">
         <div class="editor-toolbar">
-          <button class="toolbar-btn">H</button>
-          <button class="toolbar-btn"><b>B</b></button>
-          <button class="toolbar-btn"><i>I</i></button>
-          <button class="toolbar-btn">&lt;/&gt;</button>
+          <button class="toolbar-btn" onclick="uploadFile()" title="上传图片/文件">🖼</button>
           <span class="toolbar-sep"></span>
-          <button class="toolbar-btn">☰</button>
-          <button class="toolbar-btn">❝</button>
-          <span class="toolbar-sep"></span>
-           <button class="toolbar-btn" onclick="saveNote()" title="保存 (⌘S)">💾</button>
+          <button class="toolbar-btn" onclick="saveNote()" title="保存 (⌘S)">💾</button>
         </div>
         <textarea class="editor-textarea" id="editorTextarea" placeholder="用 Markdown 写笔记...">## 整体架构
 
@@ -635,6 +629,25 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
     </div>
     <div class="modal-actions" style="margin-top:16px">
       <button class="btn btn-ghost" onclick="closeShortcuts()">知道了</button>
+    </div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeLogin()">
+  <div class="modal" style="width:360px">
+    <h3 id="loginTitle">登录</h3>
+    <label>用户名</label>
+    <input type="text" id="loginUsername" placeholder="输入用户名">
+    <label>密码</label>
+    <input type="password" id="loginPassword" placeholder="输入密码" onkeydown="if(event.key==='Enter')doLogin()">
+    <div id="loginError" style="color:#bf5b5b;font-size:.78rem;margin-bottom:10px;display:none"></div>
+    <div class="modal-actions" style="justify-content:space-between">
+      <span style="font-size:.75rem;color:var(--text-tertiary);cursor:pointer" onclick="showRegister()">注册账号</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="closeLogin()">取消</button>
+        <button class="btn btn-primary" onclick="doLogin()" id="loginBtn">登录</button>
+      </div>
     </div>
   </div>
 </div>
@@ -694,6 +707,15 @@ toggle.addEventListener('click',()=>{
 
 let currentSlug = null;
 let nextId = 6;
+let currentUser = null;
+
+function getToken(){
+  return localStorage.getItem('kb-token') || '';
+}
+function setToken(t){
+  if(t) localStorage.setItem('kb-token', t);
+  else localStorage.removeItem('kb-token');
+}
 
 // ── localStorage persistence ──
 function saveNotes(){
@@ -737,8 +759,11 @@ loadNotes();
 // ── API ──
 async function apiFetch(path, opts={}){
   try {
+    const headers = { 'Content-Type': 'application/json', ...opts.headers };
+    const token = getToken();
+    if(token) headers['Authorization'] = 'Bearer ' + token;
     const res = await fetch('/api' + path, {
-      headers: { 'Content-Type': 'application/json', ...opts.headers },
+      headers,
       ...opts,
     });
     if(!res.ok) throw new Error(res.statusText);
@@ -748,7 +773,10 @@ async function apiFetch(path, opts={}){
 
 async function syncFromAPI(){
   try {
-    const res = await fetch('/api/notes');
+    const headers = {};
+    const token = getToken();
+    if(token) headers['Authorization'] = 'Bearer ' + token;
+    const res = await fetch('/api/notes', { headers });
     if(res.ok) {
       const apiNotes = await res.json();
       if(apiNotes && apiNotes.length) {
@@ -763,13 +791,183 @@ async function syncFromAPI(){
 
 async function syncTagsFromAPI(){
   try {
-    const res = await fetch('/api/tags');
+    const headers = {};
+    const token = getToken();
+    if(token) headers['Authorization'] = 'Bearer ' + token;
+    const res = await fetch('/api/tags', { headers });
     if(res.ok) {
       const data = await res.json();
       return data;
     }
   } catch(e) {}
   return null;
+}
+
+// ── Auth ──
+function openLogin(){ showModal('loginModal'); document.getElementById('loginUsername').focus(); }
+function closeLogin(){ hideModal('loginModal'); document.getElementById('loginError').style.display='none'; }
+
+function showRegister(){
+  document.getElementById('loginTitle').textContent = '注册';
+  document.getElementById('loginBtn').textContent = '注册';
+  document.getElementById('loginBtn').onclick = doRegister;
+  document.getElementById('loginError').style.display = 'none';
+}
+
+function resetLoginForm(){
+  document.getElementById('loginTitle').textContent = '登录';
+  document.getElementById('loginBtn').textContent = '登录';
+  document.getElementById('loginBtn').onclick = doLogin;
+  document.getElementById('loginUsername').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+async function doLogin(){
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if(!username || !password) return;
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+    if(data.token) {
+      setToken(data.token);
+      currentUser = data.user || username;
+      document.querySelector('.avatar').textContent = username.charAt(0).toUpperCase();
+      document.querySelector('.avatar').title = username;
+      closeLogin();
+      await reloadData();
+    } else {
+      const err = document.getElementById('loginError');
+      err.textContent = data.error || '登录失败';
+      err.style.display = 'block';
+    }
+  } catch(e) {
+    const err = document.getElementById('loginError');
+    err.textContent = '网络错误';
+    err.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = '登录';
+}
+
+async function doRegister(){
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if(!username || !password) return;
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+    if(data.token) {
+      setToken(data.token);
+      currentUser = data.user || username;
+      document.querySelector('.avatar').textContent = username.charAt(0).toUpperCase();
+      document.querySelector('.avatar').title = username;
+      closeLogin();
+      await reloadData();
+    } else {
+      const err = document.getElementById('loginError');
+      err.textContent = data.error || '注册失败';
+      err.style.display = 'block';
+    }
+  } catch(e) {
+    const err = document.getElementById('loginError');
+    err.textContent = '网络错误';
+    err.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = '注册';
+  resetLoginForm();
+}
+
+async function doLogout(){
+  const token = getToken();
+  if(token) {
+    try { await fetch('/api/auth/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } }); } catch(e) {}
+  }
+  setToken(null);
+  currentUser = null;
+  document.querySelector('.avatar').textContent = 'B';
+  document.querySelector('.avatar').title = '点击登录';
+  await reloadData();
+}
+
+async function checkAuth(){
+  const token = getToken();
+  if(!token) return;
+  try {
+    const res = await fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
+    if(res.ok) {
+      const data = await res.json();
+      if(data.user) {
+        currentUser = data.user;
+        document.querySelector('.avatar').textContent = data.user.charAt(0).toUpperCase();
+        document.querySelector('.avatar').title = data.user;
+      } else {
+        setToken(null);
+      }
+    } else {
+      setToken(null);
+    }
+  } catch(e) { setToken(null); }
+}
+
+// ── Upload ──
+async function uploadFile(){
+  const token = getToken();
+  if(!token) { openLogin(); return; }
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if(!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: formData,
+      });
+      const data = await res.json();
+      if(data.url) {
+        const mdImage = file.type.startsWith('image/') ? `![](${data.url})` : `[${file.name}](${data.url})`;
+        const textarea = document.getElementById('editorContent');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + mdImage + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + mdImage.length;
+        textarea.focus();
+        updatePreview();
+      } else {
+        alert(data.error || '上传失败');
+      }
+    } catch(e) { alert('上传失败'); }
+  };
+  input.click();
+}
+
+function showModal(id){ document.getElementById(id).style.display='flex'; }
+function hideModal(id){ document.getElementById(id).style.display='none'; }
+
+async function reloadData(){
+  const synced = await syncFromAPI();
+  if(!synced) loadNotes();
+  buildTree(activeTag);
+  await buildTagFilter();
+  if(currentSlug) loadNote(currentSlug);
+  else if(notes.length) loadNote(notes[0].slug);
 }
 
 // ── Markdown render ──
@@ -808,11 +1006,11 @@ function buildTree(activeTag){
   let html='';
   Object.keys(dirs).sort().forEach(cat => {
     html += `<div class="tree-folder" onclick="toggleFolder(this)">
-      <span class="arrow open">▶</span>
+      <span class="arrow">▶</span>
       ${cat}
       <span class="count">${dirs[cat].length}</span>
     </div>
-    <div class="tree-children open">`;
+    <div class="tree-children">`;
     dirs[cat].forEach(n => {
       const active = n.slug === currentSlug ? ' active' : '';
       html += `<div class="note-card${active}" data-slug="${n.slug}" draggable="true"
@@ -1165,6 +1363,7 @@ function initGraph(){
 
 // ── Init ──
 (async function init(){
+  await checkAuth();
   const synced = await syncFromAPI();
   if(!synced) loadNotes();
   buildTree(activeTag);
