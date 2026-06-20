@@ -65,7 +65,13 @@ export async function onRequest(context) {
       params.push(userId);
     }
 
-    await db.prepare(sql).bind(...params).run();
+    const result = await db.prepare(sql).bind(...params).run();
+
+    if (result.meta.changes === 0) {
+      return new Response(JSON.stringify({ error: '笔记不存在或无权修改' }), {
+        status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
 
     const note = await db.prepare('SELECT * FROM notes WHERE slug = ?').bind(slug).first();
     return new Response(JSON.stringify(note), {
