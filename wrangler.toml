@@ -1,0 +1,8 @@
+name = "myblog"
+compatibility_date = "2026-06-20"
+pages_build_output_dir = "/"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "myblog-db"
+database_id = "11624c55-7c35-49e0-8a05-e39c388b5b0f"
