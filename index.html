@@ -935,11 +935,11 @@ function buildTree(){
   let html='';
   Object.keys(dirs).sort().forEach(cat => {
     html += `<div class="tree-folder" onclick="toggleFolder(this)">
-      <span class="arrow">▶</span>
+      <span class="arrow${openCats.has(cat)?' open':''}">▶</span>
       ${cat}
       <span class="count">${dirs[cat].length}</span>
     </div>
-    <div class="tree-children">`;
+    <div class="tree-children${openCats.has(cat)?' open':''}">`;
     dirs[cat].forEach(n => {
       const active = n.slug === currentSlug ? ' active' : '';
       html += `<div class="note-card${active}" data-slug="${n.slug}" draggable="true"
@@ -973,6 +973,7 @@ function closeSidebar(){
 
 // ── Focus mode ──
 let focusMode = false;
+let openCats = new Set();
 function toggleFocus(){
   focusMode = !focusMode;
   document.body.classList.toggle('focus-mode', focusMode);
@@ -1013,6 +1014,9 @@ function toggleFolder(el){
   el.querySelector('.arrow').classList.toggle('open');
   const children = el.nextElementSibling;
   if(children) children.classList.toggle('open');
+  const cat = el.textContent.replace(/▶\s*|\d+$/g,'').trim();
+  if(children?.classList.contains('open')) openCats.add(cat);
+  else openCats.delete(cat);
 }
 
 function loadNote(slug){
