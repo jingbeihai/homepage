@@ -1,6 +1,6 @@
 name = "myblog"
 compatibility_date = "2026-06-20"
-pages_build_output_dir = "/"
+pages_build_output_dir = "."
 
 [[d1_databases]]
 binding = "DB"
