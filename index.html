@@ -552,12 +552,12 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
   <div class="content">
     <div class="note-view" id="noteView">
       <div class="note-card-wrap">
+        <h1 class="note-title" id="noteTitle">Cloudflare 全家桶搭建完全指南</h1>
         <div class="note-meta">
           <span class="note-tag" id="noteTag">技术</span>
           <span class="note-date" id="noteDate">2026-06-15</span>
         </div>
-        <div id="noteTags" style="margin-bottom:12px;display:flex;gap:4px;flex-wrap:wrap"></div>
-        <h1 class="note-title" id="noteTitle">Cloudflare 全家桶搭建完全指南</h1>
+        <div id="noteTags" style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap"></div>
         <div class="note-body" id="noteBody">
           <p>从零开始使用 Cloudflare Pages、R2、Workers 和 DNS 搭建个人网站生态，涵盖域名配置、存储桶设置、Pages 部署以及国内访问加速的完整流程。</p>
 
@@ -977,7 +977,6 @@ function buildTree(activeTag){
         ondragstart="dragStart(event, '${n.slug}')" ondragover="dragOver(event)" ondrop="drop(event, '${n.slug}')" ondragend="dragEnd(event)"
         onclick="loadNote('${n.slug}')">
         <div class="note-card-title">${escapeHtml(n.title)}</div>
-        <div class="note-card-date">${n.date}</div>
       </div>`;
     });
     html += '</div>';
@@ -1077,7 +1076,7 @@ function loadNote(slug){
   currentSlug = note.slug;
   exitEdit();
   closeSidebar();
-  document.getElementById('breadcrumbPath').textContent = `${note.category} / ${note.title}`;
+  document.getElementById('breadcrumbPath').textContent = note.title;
   document.getElementById('noteTag').textContent = note.category;
   document.getElementById('noteDate').textContent = note.date;
   document.getElementById('noteTitle').textContent = note.title;
