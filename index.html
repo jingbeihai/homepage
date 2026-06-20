@@ -1201,7 +1201,9 @@ function initGraph(){
   canvas.width=canvas.offsetWidth;
   canvas.height=canvas.offsetHeight;
   const nodes=notes.map((n,i)=>({
-    id:i,label:n.title,x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+    id:i,label:n.title,
+    x:canvas.width/2+(Math.random()-0.5)*80,
+    y:canvas.height/2+(Math.random()-0.5)*80,
     vx:0,vy:0,r:5
   }));
   const links=[];
