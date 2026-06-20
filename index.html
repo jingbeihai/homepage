@@ -436,6 +436,10 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
   background:var(--bg-elevated);color:#d47a7a;
 }
 
+.auth-only{ display:none; }
+.auth-only.visible{ display:inline-flex; }
+.sidebar-footer .auth-only.visible{ display:inline-flex; }
+
 /* ===== Search Overlay ===== */
 .search-overlay{
   display:none;position:fixed;inset:0;z-index:100;
@@ -521,7 +525,7 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
 
   <div class="sidebar-footer">
     <span>共 <span id="noteCount">0</span> 篇</span>
-    <button class="icon-btn" title="新建笔记" onclick="openNewNote()">＋</button>
+    <button class="icon-btn auth-only" id="btnNewNote" title="新建笔记" onclick="openNewNote()">＋</button>
   </div>
 </aside>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -539,8 +543,8 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
       <span class="focus-indicator">聚焦</span>
       <button class="btn btn-primary" onclick="toggleGraph()">◈ 图谱</button>
       <button class="btn btn-primary" onclick="toggleFocus()">⊞ 聚焦</button>
-      <button class="btn btn-primary" onclick="enterEdit()">✏ 编辑</button>
-      <button class="btn btn-delete" onclick="deleteNote()" title="删除">🗑 删除</button>
+      <button class="btn btn-primary auth-only" onclick="enterEdit()">✏ 编辑</button>
+      <button class="btn btn-delete auth-only" onclick="deleteNote()" title="删除">🗑 删除</button>
       <div class="avatar" id="avatarBtn" onclick="if(currentUser)doLogout();else openLogin()" style="cursor:pointer" title="点击登录">B</div>
     </div>
   </div>
@@ -801,6 +805,10 @@ async function syncTagsFromAPI(){
 }
 
 // ── Auth ──
+function setAuthUI(loggedIn){
+  document.querySelectorAll('.auth-only').forEach(el => el.classList.toggle('visible', loggedIn));
+}
+
 function openLogin(){ showModal('loginModal'); document.getElementById('loginUsername').focus(); }
 function closeLogin(){ hideModal('loginModal'); document.getElementById('loginError').style.display='none'; document.getElementById('loginUsername').value=''; document.getElementById('loginPassword').value=''; }
 
@@ -822,6 +830,7 @@ async function doLogin(){
       currentUser = data.user || username;
       document.querySelector('.avatar').textContent = username.charAt(0).toUpperCase();
       document.querySelector('.avatar').title = username;
+      setAuthUI(true);
       closeLogin();
       await reloadData();
     } else {
@@ -846,6 +855,7 @@ async function doLogout(){
   currentUser = null;
   document.querySelector('.avatar').textContent = 'B';
   document.querySelector('.avatar').title = '点击登录';
+  setAuthUI(false);
   await reloadData();
 }
 
@@ -860,13 +870,16 @@ async function checkAuth(){
         currentUser = data.user;
         document.querySelector('.avatar').textContent = data.user.charAt(0).toUpperCase();
         document.querySelector('.avatar').title = data.user;
+        setAuthUI(true);
       } else {
         setToken(null);
+        setAuthUI(false);
       }
     } else {
       setToken(null);
+      setAuthUI(false);
     }
-  } catch(e) { setToken(null); }
+  } catch(e) { setToken(null); setAuthUI(false); }
 }
 
 // ── Upload ──
