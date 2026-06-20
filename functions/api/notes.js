@@ -21,10 +21,9 @@ export async function onRequest(context) {
 
   if (request.method === 'GET') {
     const { searchParams } = new URL(request.url);
-    const tag = searchParams.get('tag');
     const search = searchParams.get('q');
     const token = getUserId(request);
-    let sql = 'SELECT id, title, slug, category, date, tags FROM notes';
+    let sql = 'SELECT id, title, slug, category, date FROM notes';
     const params = [];
     const conditions = [];
 
@@ -36,14 +35,10 @@ export async function onRequest(context) {
       }
     }
 
-    if (tag) {
-      conditions.push('tags LIKE ?');
-      params.push(`%"${tag}"%`);
-    }
     if (search) {
-      conditions.push('(title LIKE ? OR content LIKE ? OR tags LIKE ?)');
+      conditions.push('(title LIKE ? OR content LIKE ?)');
       const q = `%${search}%`;
-      params.push(q, q, q);
+      params.push(q, q);
     }
     if (conditions.length) {
       sql += ' WHERE ' + conditions.join(' AND ');
@@ -51,19 +46,15 @@ export async function onRequest(context) {
     sql += ' ORDER BY date DESC';
 
     const result = await db.prepare(sql).bind(...params).all();
-    const notes = result.results.map(n => ({
-      ...n,
-      tags: JSON.parse(n.tags || '[]'),
-    }));
 
-    return new Response(JSON.stringify(notes), {
+    return new Response(JSON.stringify(result.results), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
   }
 
   if (request.method === 'POST') {
     const body = await request.json();
-    const { title, category, content, tags } = body;
+    const { title, category, content } = body;
     if (!title) {
       return new Response(JSON.stringify({ error: '标题不能为空' }), {
         status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders },
@@ -79,14 +70,12 @@ export async function onRequest(context) {
 
     const slug = makeSlug(title) + '-' + Date.now();
     const date = todayStr();
-    const tagsJson = JSON.stringify(tags || []);
 
     await db.prepare(
-      'INSERT INTO notes (user_id, title, slug, category, date, content, tags) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    ).bind(userId, title, slug, category || '未分类', date, content || '', tagsJson).run();
+      'INSERT INTO notes (user_id, title, slug, category, date, content) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(userId, title, slug, category || '未分类', date, content || '').run();
 
     const note = await db.prepare('SELECT * FROM notes WHERE slug = ?').bind(slug).first();
-    note.tags = JSON.parse(note.tags || '[]');
 
     return new Response(JSON.stringify(note), {
       status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders },

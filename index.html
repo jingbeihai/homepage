@@ -261,11 +261,7 @@ body{
   display:flex;align-items:center;gap:12px;
   margin-bottom:20px;
 }
-.note-tag{
-  padding:2px 10px;border-radius:var(--radius-full);
-  background:var(--accent-subtle);color:var(--accent);
-  font-weight:600;font-size:.75rem;letter-spacing:.02em;
-}
+
 .note-date{
   font-size:.78rem;color:var(--text-tertiary);
 }
@@ -394,13 +390,6 @@ body{
 .focus-indicator{display:none;font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.04em}
 .focus-mode .focus-indicator{display:inline}
 
-/* ===== Tags ===== */
-.tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:.68rem;font-weight:500;background:var(--accent-subtle);color:var(--accent-soft);margin-right:4px;cursor:pointer;transition:all .15s}
-.tag:hover{background:rgba(91,106,191,0.15)}
-.tag.active{background:var(--accent);color:#fff}
-.tag-filter-bar{display:flex;gap:4px;flex-wrap:wrap;padding:0 12px 8px}
-.tag-filter-bar .tag{font-size:.65rem}
-
 /* ===== Shortcuts modal ===== */
 .shortcuts-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin-top:12px}
 .shortcut-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.82rem}
@@ -513,8 +502,6 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
     </div>
   </div>
 
-  <div class="tag-filter-bar" id="tagFilterBar"></div>
-
   <div class="search-bar" onclick="openSearch()">
     <span class="icon">🔍</span>
     <span>搜索笔记...</span>
@@ -554,10 +541,8 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
       <div class="note-card-wrap">
         <h1 class="note-title" id="noteTitle">Cloudflare 全家桶搭建完全指南</h1>
         <div class="note-meta">
-          <span class="note-tag" id="noteTag">技术</span>
           <span class="note-date" id="noteDate">2026-06-15</span>
         </div>
-        <div id="noteTags" style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap"></div>
         <div class="note-body" id="noteBody">
           <p>从零开始使用 Cloudflare Pages、R2、Workers 和 DNS 搭建个人网站生态，涵盖域名配置、存储桶设置、Pages 部署以及国内访问加速的完整流程。</p>
 
@@ -661,8 +646,6 @@ mark{background:rgba(91,106,191,0.2);color:var(--text-hero);border-radius:2px;pa
     <input type="text" id="newNoteTitle" placeholder="输入笔记标题...">
     <label>分类</label>
     <input type="text" id="newNoteCategory" placeholder="例如：技术、笔记、随笔">
-    <label>标签 <span style="color:var(--text-tertiary);font-weight:400">（逗号分隔）</span></label>
-    <input type="text" id="newNoteTags" placeholder="cloudflare, caddy, 部署">
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeNewNote()">取消</button>
       <button class="btn btn-primary" onclick="createNote()">创建</button>
@@ -748,11 +731,11 @@ Cloudflare 提供了一套完整的免费工具链：Pages、R2、Workers、DNS�
 > Caddy 反向代理是解决国内访问 Cloudflare Pages 速度问题的最佳方案。`;
 
 let notes = [
-  { id:1, title:'Cloudflare 全家桶搭建完全指南', slug:'cloudflare-guide', category:'技术', tags:['cloudflare','部署','dns'], date:'2026-06-15', content: defaultContent },
-  { id:2, title:'Caddy 反向代理实践', slug:'caddy-proxy', category:'技术', tags:['caddy','反向代理','腾讯云'], date:'2026-06-10', content:'38元/年腾讯云 + Caddy 自动 HTTPS，解决 CF Pages 国内访问慢的问题。' },
-  { id:3, title:'CSS 现代特性笔记', slug:'css-modern', category:'笔记', tags:['css','样式'], date:'2026-06-05', content:'@layer 级联层、light-dark() 主题函数、color-mix() 颜色混合。' },
-  { id:4, title:'R2 Web 文件管理器', slug:'r2-web', category:'技术', tags:['r2','cloudflare','前端'], date:'2026-05-20', content:'基于 aws4fetch 的纯客户端 R2 管理器，拖拽上传、暗色模式。' },
-  { id:5, title:'为什么选 Cloudflare', slug:'why-cloudflare', category:'随笔', tags:['cloudflare','选型'], date:'2026-05-28', content:'Pages 免费 CDN + R2 免流量 + Workers 边缘计算。' },
+  { id:1, title:'Cloudflare 全家桶搭建完全指南', slug:'cloudflare-guide', category:'技术', date:'2026-06-15', content: defaultContent },
+  { id:2, title:'Caddy 反向代理实践', slug:'caddy-proxy', category:'技术', date:'2026-06-10', content:'38元/年腾讯云 + Caddy 自动 HTTPS，解决 CF Pages 国内访问慢的问题。' },
+  { id:3, title:'CSS 现代特性笔记', slug:'css-modern', category:'笔记', date:'2026-06-05', content:'@layer 级联层、light-dark() 主题函数、color-mix() 颜色混合。' },
+  { id:4, title:'R2 Web 文件管理器', slug:'r2-web', category:'技术', date:'2026-05-20', content:'基于 aws4fetch 的纯客户端 R2 管理器，拖拽上传、暗色模式。' },
+  { id:5, title:'为什么选 Cloudflare', slug:'why-cloudflare', category:'随笔', date:'2026-05-28', content:'Pages 免费 CDN + R2 免流量 + Workers 边缘计算。' },
 ];
 
 loadNotes();
@@ -781,27 +764,13 @@ async function syncFromAPI(){
     if(res.ok) {
       const apiNotes = await res.json();
       if(apiNotes && apiNotes.length) {
-        notes = apiNotes.map(n => ({ ...n, tags: n.tags || [] }));
+        notes = apiNotes.map(n => ({ ...n }));
         saveNotes();
         return true;
       }
     }
   } catch(e) {}
   return false;
-}
-
-async function syncTagsFromAPI(){
-  try {
-    const headers = {};
-    const token = getToken();
-    if(token) headers['Authorization'] = 'Bearer ' + token;
-    const res = await fetch('/api/tags', { headers });
-    if(res.ok) {
-      const data = await res.json();
-      return data;
-    }
-  } catch(e) {}
-  return null;
 }
 
 // ── Auth ──
@@ -924,8 +893,7 @@ function hideModal(id){ document.getElementById(id).style.display='none'; }
 async function reloadData(){
   const synced = await syncFromAPI();
   if(!synced) loadNotes();
-  buildTree(activeTag);
-  await buildTagFilter();
+  buildTree();
   if(currentSlug) loadNote(currentSlug);
   else if(notes.length) loadNote(notes[0].slug);
 }
@@ -954,11 +922,10 @@ function makeSlug(title){
   return title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g,'-').replace(/^-|-$/g,'') || 'note-'+Date.now();
 }
 
-function buildTree(activeTag){
+function buildTree(){
   const tree=document.getElementById('tree');
   const dirs = {};
-  let filtered = notes;
-  if(activeTag) filtered = notes.filter(n => n.tags && n.tags.includes(activeTag));
+  const filtered = notes;
   filtered.forEach(n => {
     if(!dirs[n.category]) dirs[n.category] = [];
     dirs[n.category].push(n);
@@ -989,30 +956,6 @@ function escapeHtml(s){
   const d=document.createElement('div');
   d.textContent=s;
   return d.innerHTML;
-}
-
-// ── Tags ──
-let activeTag = null;
-async function buildTagFilter(){
-  const bar = document.getElementById('tagFilterBar');
-  const tagSet = new Set();
-  notes.forEach(n => (n.tags||[]).forEach(t => tagSet.add(t)));
-  let tags = [...tagSet].sort();
-  const apiData = await syncTagsFromAPI();
-  if(apiData && apiData.tags) {
-    tags = apiData.tags;
-  }
-  let html = '<span style="font-size:.65rem;color:var(--text-tertiary);margin-right:4px;font-weight:500">标签</span>';
-  html += `<span class="tag ${!activeTag?'active':''}" onclick="filterTag(null)">全部</span>`;
-  tags.forEach(t => {
-    html += `<span class="tag ${activeTag===t?'active':''}" onclick="filterTag('${t}')">${escapeHtml(t)}</span>`;
-  });
-  bar.innerHTML = html;
-}
-function filterTag(tag){
-  activeTag = tag;
-  buildTree(activeTag);
-  buildTagFilter();
 }
 
 // ── Sidebar ──
@@ -1061,7 +1004,7 @@ function drop(e, targetSlug){
   notes.splice(toIdx, 0, moved);
   dragSlug = null;
   saveNotes();
-  buildTree(activeTag);
+  buildTree();
 }
 
 function toggleFolder(el){
@@ -1077,25 +1020,20 @@ function loadNote(slug){
   exitEdit();
   closeSidebar();
   document.getElementById('breadcrumbPath').textContent = note.title;
-  document.getElementById('noteTag').textContent = note.category;
   document.getElementById('noteDate').textContent = note.date;
   document.getElementById('noteTitle').textContent = note.title;
-  const tagsEl = document.getElementById('noteTags');
-  tagsEl.innerHTML = (note.tags||[]).map(t => `<span class="tag" onclick="filterTag('${escapeHtml(t)}')">${escapeHtml(t)}</span>`).join('');
   const wrap = document.querySelector('.note-card-wrap');
   wrap.classList.remove('fade-in');
   void wrap.offsetWidth;
   document.getElementById('noteBody').innerHTML = renderMd(note.content);
   wrap.classList.add('fade-in');
-  buildTree(activeTag);
-  buildTagFilter();
+  buildTree();
 }
 
 function openNewNote(){
   document.getElementById('newNoteModal').classList.add('open');
   document.getElementById('newNoteTitle').value='';
   document.getElementById('newNoteCategory').value='';
-  document.getElementById('newNoteTags').value='';
   setTimeout(()=>document.getElementById('newNoteTitle').focus(),100);
 }
 function closeNewNote(){
@@ -1105,14 +1043,12 @@ async function createNote(){
   const title = document.getElementById('newNoteTitle').value.trim();
   const category = document.getElementById('newNoteCategory').value.trim() || '未分类';
   if(!title) return;
-  const tagsStr = document.getElementById('newNoteTags').value.trim();
-  const tags = tagsStr ? tagsStr.split(/[,，]/).map(s=>s.trim()).filter(Boolean) : [];
   const apiNote = await apiFetch('/notes', {
     method: 'POST',
-    body: JSON.stringify({ title, category, tags, content: '新笔记，开始写点什么...' }),
+    body: JSON.stringify({ title, category, content: '新笔记，开始写点什么...' }),
   });
   if(apiNote) {
-    notes.push({ ...apiNote, tags: apiNote.tags || [] });
+    notes.push({ ...apiNote });
     saveNotes();
     closeNewNote();
     loadNote(apiNote.slug);
@@ -1122,7 +1058,7 @@ async function createNote(){
   if(notes.find(n=>n.slug===slug)) slug+='-'+Date.now();
   const note = {
     id: nextId++,
-    title, slug, category, tags,
+    title, slug, category,
     date: todayStr(),
     content: '新笔记，开始写点什么...'
   };
@@ -1176,12 +1112,10 @@ async function deleteNote(){
   else {
     currentSlug = null;
     document.getElementById('breadcrumbPath').textContent = '所有笔记';
-    document.getElementById('noteTag').textContent = '';
     document.getElementById('noteDate').textContent = '';
     document.getElementById('noteTitle').textContent = '无笔记';
     document.getElementById('noteBody').innerHTML = '<p style="color:var(--text-tertiary)">暂无笔记，点 + 新建</p>';
-    buildTree(activeTag);
-    buildTagFilter();
+    buildTree();
   }
 }
 
@@ -1207,7 +1141,6 @@ function doSearch(){
   const matched = notes.filter(n =>
     n.title.toLowerCase().includes(q) ||
     n.category.toLowerCase().includes(q) ||
-    (n.tags||[]).some(t => t.toLowerCase().includes(q)) ||
     mdToText(n.content).toLowerCase().includes(q)
   );
   results.innerHTML = matched.length
@@ -1325,8 +1258,7 @@ function initGraph(){
   await checkAuth();
   const synced = await syncFromAPI();
   if(!synced) loadNotes();
-  buildTree(activeTag);
-  await buildTagFilter();
+  buildTree();
   if(currentSlug) loadNote(currentSlug);
   else if(notes.length) loadNote(notes[0].slug);
 })();

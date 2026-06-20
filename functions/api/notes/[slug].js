@@ -34,7 +34,6 @@ export async function onRequest(context) {
         status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
-    note.tags = JSON.parse(note.tags || '[]');
     return new Response(JSON.stringify(note), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
@@ -42,14 +41,13 @@ export async function onRequest(context) {
 
   if (request.method === 'PUT') {
     const body = await request.json();
-    const { title, category, content, tags } = body;
+    const { title, category, content } = body;
     const updates = [];
     const params = [];
 
     if (title !== undefined) { updates.push('title = ?'); params.push(title); }
     if (category !== undefined) { updates.push('category = ?'); params.push(category); }
     if (content !== undefined) { updates.push('content = ?'); params.push(content); }
-    if (tags !== undefined) { updates.push('tags = ?'); params.push(JSON.stringify(tags)); }
 
     if (!updates.length) {
       return new Response(JSON.stringify({ error: '没有要更新的字段' }), {
@@ -70,7 +68,6 @@ export async function onRequest(context) {
     await db.prepare(sql).bind(...params).run();
 
     const note = await db.prepare('SELECT * FROM notes WHERE slug = ?').bind(slug).first();
-    note.tags = JSON.parse(note.tags || '[]');
     return new Response(JSON.stringify(note), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
