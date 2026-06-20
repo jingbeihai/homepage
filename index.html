@@ -1244,7 +1244,7 @@ function closeShortcuts(){
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch()}
-  if((e.metaKey||e.ctrlKey)&&e.key==='n'){e.preventDefault();openNewNote()}
+  if((e.metaKey||e.ctrlKey)&&e.key==='n'){e.preventDefault();if(currentUser)openNewNote();else openLogin()}
   if((e.metaKey||e.ctrlKey)&&e.key==='.'){e.preventDefault();toggleFocus()}
   if(e.key==='?'&&!e.metaKey&&!e.ctrlKey){openShortcuts()}
   if(e.key==='Escape'){closeSearch();closeNewNote();closeShortcuts()}
