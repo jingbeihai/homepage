@@ -766,13 +766,18 @@ async function syncFromAPI(){
     if(res.ok) {
       const apiNotes = await res.json();
       if(apiNotes && apiNotes.length) {
-        const localNotes = notes;
-        notes = apiNotes.map(n => ({ ...n }));
-        if(localNotes.length) {
-          for(const local of localNotes) {
-            if(!notes.find(n => n.slug === local.slug)) {
-              notes.push(local);
-            }
+        const localMap = {};
+        notes.forEach(n => localMap[n.slug] = n);
+        notes = apiNotes.map(n => {
+          const local = localMap[n.slug];
+          if(local && local.content !== n.content) {
+            return { ...n, content: local.content };
+          }
+          return { ...n };
+        });
+        for(const slug in localMap) {
+          if(!notes.find(n => n.slug === slug)) {
+            notes.push(localMap[slug]);
           }
         }
         saveNotes();
@@ -902,8 +907,8 @@ function showModal(id){ document.getElementById(id).style.display='flex'; }
 function hideModal(id){ document.getElementById(id).style.display='none'; }
 
 async function reloadData(){
-  const synced = await syncFromAPI();
-  if(!synced) loadNotes();
+  loadNotes();
+  await syncFromAPI();
   buildTree();
   if(currentSlug) loadNote(currentSlug);
   else if(notes.length) loadNote(notes[0].slug);
@@ -1281,8 +1286,8 @@ function initGraph(){
 // ── Init ──
 (async function init(){
   await checkAuth();
-  const synced = await syncFromAPI();
-  if(!synced) loadNotes();
+  loadNotes();
+  await syncFromAPI();
   buildTree();
   if(currentSlug) loadNote(currentSlug);
   else if(notes.length) loadNote(notes[0].slug);
